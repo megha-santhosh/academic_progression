@@ -151,8 +151,14 @@ with st.form("student_form"):
     with scol4:
         sem4 = st.number_input("Sem 4 %", 0.0, 100.0, 60.0)
         sem8 = st.number_input("Sem 8 %", 0.0, 100.0, 0.0)
-        
-    total_aggregate = st.number_input("Total Aggregate %", 0.0, 100.0, 60.0)
+    
+    # Automatically calculate total aggregate from attended semesters only
+    semesters = [sem1, sem2, sem3, sem4, sem5, sem6, sem7, sem8]
+    attended_semesters = [s for s in semesters if s > 0]
+    total_aggregate = sum(attended_semesters) / len(attended_semesters) if attended_semesters else 0.0
+    
+    # Display the calculated total aggregate
+    st.metric("📈 Total Aggregate %", f"{total_aggregate:.2f}")
 
     # Buttons
     st.write("---")
