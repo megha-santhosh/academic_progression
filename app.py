@@ -53,6 +53,13 @@ def get_recommendations(api_key, student_data):
         
         prompt = f"""
         Act as an expert academic counselor. Based on the following student profile, provide specific, actionable, and encouraging recommendations to improve their academic performance and study habits.
+        Use the following evaluation rules strictly:
+
+        Attendance Evaluation:
+        - Below 75% → Low attendance
+        - 75% to 85% → Moderate attendance
+        - Above 85% → Good attendance
+        Now analyze the following student profile strictly based on these rules.
         
         Student Profile:
         - Gender: {student_data['Gender']}
