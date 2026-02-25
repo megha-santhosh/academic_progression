@@ -147,16 +147,16 @@ with st.form("student_form"):
     
     scol1, scol2, scol3, scol4 = st.columns(4)
     with scol1:
-        sem1 = st.number_input("Sem 1 %", 0.0, 100.0, 60.0)
+        sem1 = st.number_input("Sem 1 %", 0.0, 100.0, 0.0)
         sem5 = st.number_input("Sem 5 %", 0.0, 100.0, 0.0)
     with scol2:
-        sem2 = st.number_input("Sem 2 %", 0.0, 100.0, 60.0)
+        sem2 = st.number_input("Sem 2 %", 0.0, 100.0, 0.0)
         sem6 = st.number_input("Sem 6 %", 0.0, 100.0, 0.0)
     with scol3:
-        sem3 = st.number_input("Sem 3 %", 0.0, 100.0, 60.0)
+        sem3 = st.number_input("Sem 3 %", 0.0, 100.0, 0.0)
         sem7 = st.number_input("Sem 7 %", 0.0, 100.0, 0.0)
     with scol4:
-        sem4 = st.number_input("Sem 4 %", 0.0, 100.0, 60.0)
+        sem4 = st.number_input("Sem 4 %", 0.0, 100.0, 0.0)
         sem8 = st.number_input("Sem 8 %", 0.0, 100.0, 0.0)
     
     # Automatically calculate total aggregate from attended semesters only
@@ -190,7 +190,11 @@ student_data = {
     'Semester 1(aggregate)': sem1,
     'Semester 2(aggregate)': sem2,
     'Semester 3(aggregate)': sem3,
-    'Semester 4(aggregate)': sem4
+    'Semester 4(aggregate)': sem4,
+    'Semester 5(aggregate)': sem5,
+    'Semester 6(aggregate)': sem6,
+    'Semester 7(aggregate)': sem7,
+    'Semester 8(aggregate)': sem8
 }
 
 # --- Recommendations Logic ---
@@ -205,35 +209,39 @@ if submit_recommend:
 if submit_predict:
     st.write("---")
     st.header("📉 Risk Prediction Analysis")
-    with st.spinner("Analyzing performance patterns..."):
-        # Pass the full student_data dict. predict_hybrid will look for its specific keys.
-        label, confidence = predict_academic_progression(student_data)
-        
-    # Result Display
-    status = label[0]
-    conf_score = confidence[0] * 100
-    
-    col_res1, col_res2 = st.columns([1, 2])
-    
-    with col_res1:
-        if status == "At Risk":
-            st.error(f"### ⚠️ Status: At Risk")
-        else:
-            st.success(f"### ✅ Status: At Safe")
-        st.metric("Confidence Score", f"{conf_score:.2f}%")
 
-    with col_res2:
-        if status == "At Risk":
-            st.write("### Analysis")
-            st.warning("Based on your academic history and study habits, there is a high probability of academic decline. We recommend focusing on inconsistent areas and seeking guidance.")
-        else:
-            st.write("### Analysis")
-            st.success("You are on a safe academic path! Your performance and habits indicate stability. Keep up the consistent effort.")
-            
-    # Chart
-    st.write("#### Grade Trend (Sem 1-4)")
-    chart_data = {
-        "Semester": ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
-        "Aggregate": [sem1, sem2, sem3, sem4]
-    }
-    st.line_chart(chart_data, x="Semester", y="Aggregate", color="#FF0000" if status == "At Risk" else "#00FF00")
+    with st.spinner("Analyzing performance patterns..."):
+        label, confidence = predict_academic_progression(student_data)
+
+    # Check if prediction failed
+    if isinstance(label[0], str) and "Error" in label[0]:
+        st.error(label[0])
+    else:
+        status = label[0]
+        conf_score = confidence[0] * 100
+
+        col_res1, col_res2 = st.columns([1, 2])
+
+        with col_res1:
+            if status == "At Risk":
+                st.error("### ⚠️ Status: At Risk")
+            else:
+                st.success("### ✅ Status: At Safe")
+            st.metric("Confidence Score", f"{conf_score:.2f}%")
+
+        with col_res2:
+            if status == "At Risk":
+                st.warning("High probability of academic decline.")
+            else:
+                st.success("You are on a safe academic path!")
+
+        # Chart
+        st.write("#### Grade Trend (Sem 1-8)")
+        chart_data = {
+            "Semester": ["Sem 1", "Sem 2", "Sem 3", "Sem 4",
+                         "Sem 5", "Sem 6", "Sem 7", "Sem 8"],
+            "Aggregate": [sem1, sem2, sem3, sem4,
+                          sem5, sem6, sem7, sem8]
+        }
+
+        st.line_chart(chart_data)
