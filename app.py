@@ -128,14 +128,14 @@ with st.form("student_form"):
         extracurricular = st.radio("Extracurricular Activities", ["Yes", "No"], horizontal=True)
 
     with col2:
-        st.header("📚 Study Habits")
+        st.header("Study Habits")
         study_hours = st.number_input("Study Hours (Daily)", min_value=0.0, max_value=24.0, step=0.5, value=4.0)
         attendance = st.slider("Attendance Percentage", 0, 100, 75)
         library_usage = st.selectbox("Library Usage", ["Yes", "No"])
         devices = st.multiselect("Devices Used for Studying", ["Laptops", "Mobile", "Text books"], default=["Text books"])
 
     with col3:
-        st.header("🏫 Engagement")
+        st.header("Engagement")
         # Default keys for engagement
         engagement_map = {"Low": 0, "Medium": 1, "High": 2} # Just for select slider logic if needed, but strings are fine
         classroom_engagement = st.select_slider("Classroom Engagement Level", options=["Low", "Medium", "High"], value="Medium")
@@ -143,7 +143,7 @@ with st.form("student_form"):
         backlogs = st.number_input("Number of Backlogs", min_value=0, step=1, value=0)
 
     st.write("---")
-    st.header("📊 Academic Performance (Semester Aggregates)")
+    st.header("Academic Performance (Semester Aggregates)")
     
     scol1, scol2, scol3, scol4 = st.columns(4)
     with scol1:
@@ -165,7 +165,7 @@ with st.form("student_form"):
     total_aggregate = sum(attended_semesters) / len(attended_semesters) if attended_semesters else 0.0
     
     # Display the calculated total aggregate
-    st.metric("📈 Total Aggregate %", f"{total_aggregate:.2f}")
+    st.metric("Total Aggregate %", f"{total_aggregate:.2f}")
 
     # Buttons
     st.write("---")
