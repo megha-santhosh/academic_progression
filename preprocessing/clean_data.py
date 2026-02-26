@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 # Load raw data
-df = pd.read_csv("data/raw_dataset.csv")
+df = pd.read_csv("data/labeled_dataset.csv")
 
 print("Original shape:", df.shape)
 

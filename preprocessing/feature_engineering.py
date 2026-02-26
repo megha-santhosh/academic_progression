@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import joblib
-df = pd.read_csv("data/labeled_dataset.csv")
+df = pd.read_csv("data/cleaned_dataset.csv")
 
 y = df['Risk_Status']
 X = df.drop([
