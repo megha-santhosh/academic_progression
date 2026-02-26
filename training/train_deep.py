@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
 # Load labeled dataset
-df = pd.read_csv("data/labeled_dataset.csv")
+df = pd.read_csv("data/cleaned_dataset.csv")
 
 semester_cols = [
     'Semester 1(aggregate)','Semester 2(aggregate)','Semester 3(aggregate)',

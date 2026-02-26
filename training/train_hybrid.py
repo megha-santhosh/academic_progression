@@ -14,7 +14,7 @@ from tensorflow.keras.regularizers import l2
 # ==========================================================
 # LOAD DATA
 # ==========================================================
-df = pd.read_csv("data/labeled_dataset.csv")
+df = pd.read_csv("data/cleaned_dataset.csv")
 
 semester_cols = [
     'Semester 1(aggregate)','Semester 2(aggregate)',
