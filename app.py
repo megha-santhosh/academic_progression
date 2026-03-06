@@ -113,7 +113,7 @@ with st.sidebar:
 
 # Main Title
 st.title("🎓 Academic Progression System")
-st.write("Enter your details below to get recommendations or predict academic risk.")
+st.write("Enter your details below to get recommendations.")
 
 # Form Input
 with st.form("student_form"):
@@ -176,7 +176,7 @@ with st.form("student_form"):
     with b_col2:
         submit_predict = st.form_submit_button("🔮 Predict Risk Status")
 
-# common_data preparation
+# data preparation
 student_data = {
     "Gender": gender, "Sleep Hours": sleep_hours, "Internet Access": internet_access,
     "Extracurriculars": extracurricular, "Study Hours": study_hours, "Attendance": attendance,
@@ -185,8 +185,6 @@ student_data = {
     "Sem 1": sem1, "Sem 2": sem2, "Sem 3": sem3, "Sem 4": sem4,
     "Sem 5": sem5, "Sem 6": sem6, "Sem 7": sem7, "Sem 8": sem8,
     "Total Aggregate": total_aggregate,
-    
-    # Map for Prediction inputs specifically (keys matching predict_hybrid expectations if different)
     'Semester 1(aggregate)': sem1,
     'Semester 2(aggregate)': sem2,
     'Semester 3(aggregate)': sem3,
@@ -197,7 +195,7 @@ student_data = {
     'Semester 8(aggregate)': sem8
 }
 
-# --- Recommendations Logic ---
+# Recommendations Logic 
 if submit_recommend:
     st.write("---")
     st.header("📋 AI Recommendations")
@@ -205,7 +203,7 @@ if submit_recommend:
         recommendation = get_recommendations(api_key, student_data)
         st.markdown(recommendation)
 
-# --- Prediction Logic ---
+# Prediction Logic
 if submit_predict:
     st.write("---")
     st.header("📉 Risk Prediction Analysis")
