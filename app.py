@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 from groq import Groq
-from prediction.predict_hybrid import predict_academic_progression
 
 # Set page config
 st.set_page_config(
@@ -79,13 +78,15 @@ def get_recommendations(api_key, student_data):
         Please analyze this profile and provide a SHORT, CONCISE, and SIMPLIFIED response. Do NOT use long paragraphs. Use bullet points.
         
         Focus ONLY on these three things:
-        1. **Weaknesses**: What is negatively impacting their performance? (Max 2-3 points)
-        2. **Areas of Improvement**: Specific metrics or habits to target. (Max 2-3 points)
-        3. **How to Overcome**: Simple, actionable steps to fix the issues. (Max 3 steps)
+        1. **Risk Status**: Give if the person is "At Risk" or Safe
+        2. **Weaknesses**: What is negatively impacting their performance? (Max 2-3 points)
+        3. **Areas of Improvement**: Specific metrics or habits to target. (Max 2-3 points)
+        4. **How to Overcome**: Simple, actionable steps to fix the issues. (Max 3 steps)
         
+
         Keep the language simple and direct.
         """
-        
+
         completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
@@ -109,7 +110,7 @@ with st.sidebar:
     st.title("Settings")
     api_key = st.text_input("Enter Groq API Key", type="password", help="Get your key from Groq Console")
     st.write("---")
-    st.info("This tool provides both AI-powered study recommendations and academic risk prediction.")
+    st.info("This tool provides AI-powered recommendations based on your academic, behavioural and lifestyle based data.")
 
 # Main Title
 st.title("🎓 Academic Progression System")
@@ -169,12 +170,10 @@ with st.form("student_form"):
 
     # Buttons
     st.write("---")
-    b_col1, b_col2 = st.columns(2)
+    b_col1= st.columns(1)[0]
     
     with b_col1:
         submit_recommend = st.form_submit_button("✨ Give Recommendations")
-    with b_col2:
-        submit_predict = st.form_submit_button("🔮 Predict Risk Status")
 
 # data preparation
 student_data = {
@@ -203,43 +202,3 @@ if submit_recommend:
         recommendation = get_recommendations(api_key, student_data)
         st.markdown(recommendation)
 
-# Prediction Logic
-if submit_predict:
-    st.write("---")
-    st.header("📉 Risk Prediction Analysis")
-
-    with st.spinner("Analyzing performance patterns..."):
-        label, confidence = predict_academic_progression(student_data)
-
-    # Check if prediction failed
-    if isinstance(label[0], str) and "Error" in label[0]:
-        st.error(label[0])
-    else:
-        status = label[0]
-        conf_score = confidence[0] * 100
-
-        col_res1, col_res2 = st.columns([1, 2])
-
-        with col_res1:
-            if status == "At Risk":
-                st.error("### ⚠️ Status: At Risk")
-            else:
-                st.success("### ✅ Status: At Safe")
-            st.metric("Confidence Score", f"{conf_score:.2f}%")
-
-        with col_res2:
-            if status == "At Risk":
-                st.warning("High probability of academic decline.")
-            else:
-                st.success("You are on a safe academic path!")
-
-        # Chart
-        st.write("#### Grade Trend (Sem 1-8)")
-        chart_data = {
-            "Semester": ["Sem 1", "Sem 2", "Sem 3", "Sem 4",
-                         "Sem 5", "Sem 6", "Sem 7", "Sem 8"],
-            "Aggregate": [sem1, sem2, sem3, sem4,
-                          sem5, sem6, sem7, sem8]
-        }
-
-        st.line_chart(chart_data)
