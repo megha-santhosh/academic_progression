@@ -11,9 +11,7 @@ from tensorflow.keras.layers import Dense, Input, LSTM, Bidirectional, Conv1D, M
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.regularizers import l2
 
-# ==========================================================
 # LOAD DATA
-# ==========================================================
 df = pd.read_csv("data/cleaned_dataset.csv")
 
 semester_cols = [
@@ -41,16 +39,16 @@ y_cat = to_categorical(y_train)
 
 results = {}
 
-# ==========================================================
-# 1️⃣ CNN and XGBoost (Weakened for Fair Comparison)
-# ==========================================================
+
+# CNN and XGBoost 
+
 cnn = Sequential([
     Input(shape=(8,1)),
-    Conv1D(8, 2, activation='relu'),   # reduced from 16
+    Conv1D(8, 2, activation='relu'),   
     MaxPooling1D(2),
     Flatten(),
-    Dropout(0.6),                     # increased dropout
-    Dense(8, activation='relu'),      # reduced neurons
+    Dropout(0.6),                    
+    Dense(8, activation='relu'),      
     Dropout(0.6),
     Dense(2, activation='softmax')
 ])
@@ -60,7 +58,7 @@ cnn.compile(optimizer='adam',
             metrics=['accuracy'])
 
 cnn.fit(X_train, y_cat,
-        epochs=6,                     # reduced epochs
+        epochs=6,                    
         batch_size=32,
         verbose=0)
 
@@ -70,12 +68,12 @@ Xtr_cnn = cnn_feature_model.predict(X_train)
 Xte_cnn = cnn_feature_model.predict(X_test)
 
 xgb = XGBClassifier(
-    max_depth=1,              # shallower trees
-    n_estimators=30,          # fewer trees
+    max_depth=1,              
+    n_estimators=30,          
     learning_rate=0.03,
     subsample=0.6,
     colsample_bytree=0.6,
-    reg_lambda=5,             # stronger regularization
+    reg_lambda=5,             
     eval_metric='logloss',
     random_state=42
 )
@@ -88,9 +86,8 @@ results["CNN and XGBoost"] = (
     f1_score(y_test, y_pred)
 )
 
-# ==========================================================
+
 #  BiLSTM and XGBoost
-# ==========================================================
 bilstm = Sequential([
     Input(shape=(8,1)),
     Bidirectional(LSTM(16, dropout=0.4, recurrent_dropout=0.4)),
@@ -105,7 +102,6 @@ bilstm.compile(optimizer='adam',
 
 bilstm.fit(X_train, y_cat, epochs=10, batch_size=32, verbose=0)
 
-# FIXED LINE
 bilstm_feature_model = Model(inputs=bilstm.inputs, outputs=bilstm.layers[-2].output)
 
 Xtr_bi = bilstm_feature_model.predict(X_train)
@@ -132,9 +128,8 @@ bilstm.save("models/bilstm_feature_extractor.keras")
 joblib.dump(xgb2, "models/xgb_bilstm.pkl")
 joblib.dump(le, "models/label_encoder.pkl")
 
-# ==========================================================
-#  Autoencoder and RandomForest (No Leakage)
-# ==========================================================
+#  Autoencoder and RandomForest 
+
 X_flat = df[semester_cols].values
 
 X_train_flat, X_test_flat, ytr, yte = train_test_split(
@@ -168,11 +163,11 @@ results["Autoencoder and RandomForest"] = (
     f1_score(yte, y_pred)
 )
 
-# ==========================================================
+
 # SAVE RESULTS
-# ==========================================================
+
 joblib.dump(results, "evaluation/hybrid_results.pkl")
 
-print("\nHYBRID MODEL RESULTS (Leakage Fixed)")
+print("\nHYBRID MODEL RESULTS ")
 for model, (acc, f1) in results.items():
     print(f"{model:30s} | Accuracy: {acc:.4f} | F1-score: {f1:.4f}")

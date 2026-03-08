@@ -35,7 +35,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y_cat, test_size=0.2, random_state=42, stratify=y
 )
 
-# ----- CNN -----
+#  CNN 
 cnn = Sequential([
     Conv1D(32, 2, activation='relu', input_shape=(8,1)),
     MaxPooling1D(2),
@@ -48,7 +48,7 @@ cnn.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accurac
 cnn.fit(X_train, y_train, epochs=15, batch_size=32, verbose=0)
 cnn_acc = cnn.evaluate(X_test, y_test, verbose=0)[1]
 
-# ----- LSTM -----
+#  LSTM 
 lstm = Sequential([
     LSTM(32, input_shape=(8,1)),
     Dense(2, activation='softmax')
@@ -58,7 +58,7 @@ lstm.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accura
 lstm.fit(X_train, y_train, epochs=15, batch_size=32, verbose=0)
 lstm_acc = lstm.evaluate(X_test, y_test, verbose=0)[1]
 
-# ----- BiLSTM -----
+#  BiLSTM 
 bilstm = Sequential([
     Bidirectional(LSTM(32), input_shape=(8,1)),
     Dense(2, activation='softmax')
@@ -68,11 +68,9 @@ bilstm.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accu
 bilstm.fit(X_train, y_train, epochs=15, batch_size=32, verbose=0)
 bilstm_acc = bilstm.evaluate(X_test, y_test, verbose=0)[1]
 
-# ==========================================================
-# ----- Autoencoder -----
-# ==========================================================
+#  Autoencoder 
 
-# Use flat input (not sequence)
+# Use flat input 
 X_flat = df[semester_cols].values
 
 X_train_flat, X_test_flat, y_train_flat, y_test_flat = train_test_split(
@@ -105,9 +103,8 @@ auto_classifier.fit(X_train_encoded, y_train_flat, epochs=15, batch_size=32, ver
 
 auto_acc = auto_classifier.evaluate(X_test_encoded, y_test_flat, verbose=0)[1]
 
-# ==========================================================
 # Save models
-# ==========================================================
+
 cnn.save("models/cnn_model.h5")
 lstm.save("models/lstm_model.h5")
 bilstm.save("models/bilstm_model.h5")

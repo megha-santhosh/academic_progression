@@ -12,7 +12,6 @@ X_test = joblib.load("data/X_test.pkl")
 y_train = joblib.load("data/y_train.pkl")
 y_test = joblib.load("data/y_test.pkl")
 
-# Drop columns that are all NaN
 mask = ~np.isnan(X_train).all(axis=0)
 X_train = X_train[:, mask]
 X_test = X_test[:, mask]
