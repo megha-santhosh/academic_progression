@@ -45,7 +45,7 @@ cnn = Sequential([
 ])
 
 cnn.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-cnn.fit(X_train, y_train, epochs=15, batch_size=32, verbose=0)
+cnn.fit(X_train, y_train, epochs=30, batch_size=32, verbose=0)
 cnn_acc = cnn.evaluate(X_test, y_test, verbose=0)[1]
 
 #  LSTM 
@@ -55,7 +55,7 @@ lstm = Sequential([
 ])
 
 lstm.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-lstm.fit(X_train, y_train, epochs=15, batch_size=32, verbose=0)
+lstm.fit(X_train, y_train, epochs=30, batch_size=32, verbose=0)
 lstm_acc = lstm.evaluate(X_test, y_test, verbose=0)[1]
 
 #  BiLSTM 
@@ -65,7 +65,7 @@ bilstm = Sequential([
 ])
 
 bilstm.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-bilstm.fit(X_train, y_train, epochs=15, batch_size=32, verbose=0)
+bilstm.fit(X_train, y_train, epochs=30, batch_size=32, verbose=0)
 bilstm_acc = bilstm.evaluate(X_test, y_test, verbose=0)[1]
 
 #  Autoencoder 
@@ -99,7 +99,7 @@ auto_classifier = Sequential([
 ])
 
 auto_classifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-auto_classifier.fit(X_train_encoded, y_train_flat, epochs=15, batch_size=32, verbose=0)
+auto_classifier.fit(X_train_encoded, y_train_flat, epochs=30, batch_size=32, verbose=0)
 
 auto_acc = auto_classifier.evaluate(X_test_encoded, y_test_flat, verbose=0)[1]
 
