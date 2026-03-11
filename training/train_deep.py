@@ -86,7 +86,7 @@ autoencoder = Model(input_layer, decoded)
 encoder = Model(input_layer, encoded)
 
 autoencoder.compile(optimizer='adam', loss='mse')
-autoencoder.fit(X_train_flat, X_train_flat, epochs=15, batch_size=32, verbose=0)
+autoencoder.fit(X_train_flat, X_train_flat, epochs=30, batch_size=32, verbose=0)
 
 # Extract compressed features
 X_train_encoded = encoder.predict(X_train_flat)
