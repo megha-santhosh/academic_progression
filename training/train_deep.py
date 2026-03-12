@@ -6,6 +6,7 @@ from tensorflow.keras.layers import Dense, LSTM, Bidirectional, Conv1D, MaxPooli
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
 
 # Load labeled dataset
 df = pd.read_csv("data/cleaned_dataset.csv")
@@ -35,7 +36,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y_cat, test_size=0.2, random_state=42, stratify=y
 )
 
-#  CNN 
+# CNN 
 cnn = Sequential([
     Conv1D(32, 2, activation='relu', input_shape=(8,1)),
     MaxPooling1D(2),
@@ -48,7 +49,11 @@ cnn.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accurac
 cnn.fit(X_train, y_train, epochs=30, batch_size=32, verbose=0)
 cnn_acc = cnn.evaluate(X_test, y_test, verbose=0)[1]
 
-#  LSTM 
+cnn_pred = np.argmax(cnn.predict(X_test), axis=1)
+y_true = np.argmax(y_test, axis=1)
+cnn_f1 = f1_score(y_true, cnn_pred)
+
+# LSTM 
 lstm = Sequential([
     LSTM(32, input_shape=(8,1)),
     Dense(2, activation='softmax')
@@ -58,7 +63,10 @@ lstm.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accura
 lstm.fit(X_train, y_train, epochs=30, batch_size=32, verbose=0)
 lstm_acc = lstm.evaluate(X_test, y_test, verbose=0)[1]
 
-#  BiLSTM 
+lstm_pred = np.argmax(lstm.predict(X_test), axis=1)
+lstm_f1 = f1_score(y_true, lstm_pred)
+
+# BiLSTM 
 bilstm = Sequential([
     Bidirectional(LSTM(32), input_shape=(8,1)),
     Dense(2, activation='softmax')
@@ -68,7 +76,10 @@ bilstm.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accu
 bilstm.fit(X_train, y_train, epochs=30, batch_size=32, verbose=0)
 bilstm_acc = bilstm.evaluate(X_test, y_test, verbose=0)[1]
 
-#  Autoencoder 
+bilstm_pred = np.argmax(bilstm.predict(X_test), axis=1)
+bilstm_f1 = f1_score(y_true, bilstm_pred)
+
+# Autoencoder 
 
 # Use flat input 
 X_flat = df[semester_cols].values
@@ -103,6 +114,10 @@ auto_classifier.fit(X_train_encoded, y_train_flat, epochs=30, batch_size=32, ver
 
 auto_acc = auto_classifier.evaluate(X_test_encoded, y_test_flat, verbose=0)[1]
 
+auto_pred = np.argmax(auto_classifier.predict(X_test_encoded), axis=1)
+y_true_auto = np.argmax(y_test_flat, axis=1)
+auto_f1 = f1_score(y_true_auto, auto_pred)
+
 # Save models
 
 cnn.save("models/cnn_model.h5")
@@ -111,10 +126,10 @@ bilstm.save("models/bilstm_model.h5")
 autoencoder.save("models/autoencoder_model.h5")
 
 results = {
-    "CNN": cnn_acc,
-    "LSTM": lstm_acc,
-    "BiLSTM": bilstm_acc,
-    "Autoencoder": auto_acc
+    "CNN": (cnn_acc, cnn_f1),
+    "LSTM": (lstm_acc, lstm_f1),
+    "BiLSTM": (bilstm_acc, bilstm_f1),
+    "Autoencoder": (auto_acc, auto_f1)
 }
 
 joblib.dump(results, "evaluation/deep_results.pkl")
