@@ -6,7 +6,7 @@ df = pd.read_csv("data/cleaned_dataset.csv")
 
 y = df['Risk_Status']
 X = df.drop([
-    'Risk_Status', 'Trend', 'slope',
+    'Risk_Status',
     'Semester 1(aggregate)','Semester 2(aggregate)',
     'Semester 3(aggregate)','Semester 4(aggregate)',
     'Semester 5(aggregate)','Semester 6(aggregate)',
